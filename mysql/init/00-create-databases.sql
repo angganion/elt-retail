@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS retailerdb
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_0900_ai_ci;
+
+CREATE DATABASE IF NOT EXISTS supplierdb
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_0900_ai_ci;
+
+GRANT ALL PRIVILEGES ON retailerdb.* TO 'project'@'%';
+GRANT ALL PRIVILEGES ON supplierdb.* TO 'project'@'%';
+
+FLUSH PRIVILEGES;

@@ -1,0 +1,59 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: project
+      MYSQL_PASSWORD: project
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  fake-gcs:
+    image: fsouza/fake-gcs-server:1.54.0
+    command: ["-scheme", "http", "-backend", "filesystem", "-filesystem-root", "/data"]
+    ports:
+      - "4444:4443"
+    volumes:
+      - ./data:/data:rw
+    user: "${UID:-1000}:${GID:-1000}"
+
+  airflow:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+      fake-gcs:
+        condition: service_started
+    user: "${AIRFLOW_UID:-50000}:0"
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/project/dags
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/data/airflow.db
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
+      AIRFLOW__DAG_PROCESSOR__DAG_BUNDLE_CONFIG_LIST: >-
+        [{"name":"dags-folder","classpath":"airflow.dag_processing.bundles.local.LocalDagBundle","kwargs":{"path":"/opt/airflow/project/dags"}}]
+      STORAGE_EMULATOR_HOST: http://fake-gcs:4443
+      RETAILER_MYSQL_URI: mysql+pymysql://project:project@mysql:3306/retailerdb
+      SUPPLIER_MYSQL_URI: mysql+pymysql://project:project@mysql:3306/supplierdb
+      PIPELINE_DUCKDB_PATH: /opt/airflow/project/output/pipeline.duckdb
+      ANALYTICS_DUCKDB_PATH: /opt/airflow/project/output/analytics.duckdb
+      TRANSFORM_SQL_DIR: /opt/airflow/project/transform
+      PYTHONPATH: /opt/airflow/project
+    volumes:
+      - .:/opt/airflow/project
+      - ./data/airflow:/opt/airflow/data
+    command: standalone
+
+volumes:
+  mysql-data:

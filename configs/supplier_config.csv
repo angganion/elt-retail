@@ -1,0 +1,3 @@
+db,src,table,load_type,watermark,is_active,targetpath
+supplierdb,supplier-db,suppliers,full load,,1,landing/supplier-db/suppliers
+supplierdb,supplier-db,product_suppliers,incremental,last_updated,1,landing/supplier-db/product_suppliers

@@ -1,0 +1,6 @@
+data/airflow/
+output/
+logs/
+data/retail-datalake/
+__pycache__/
+*.pyc

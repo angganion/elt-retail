@@ -1,0 +1,8 @@
+# Pipeline dependencies
+duckdb>=1.5            # local warehouse: audit/log tables and medallion layers
+polars>=1.0            # MySQL extraction and landing writes
+fastexcel>=0.11        # Excel reader engine for polars.read_excel
+pymysql>=1.1           # MySQL driver (via SQLAlchemy)
+SQLAlchemy>=2.0        # Python <-> MySQL bridge for pl.read_database()
+requests>=2.32         # customer reviews API fetch
+google-cloud-storage>=2.0  # GCS client (targets the fake-gcs emulator locally)

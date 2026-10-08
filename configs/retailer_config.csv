@@ -1,0 +1,7 @@
+db,src,table,load_type,watermark,is_active,targetpath
+retailerdb,retailer-db,products,incremental,updated_at,1,landing/retailer-db/products
+retailerdb,retailer-db,categories,full load,,1,landing/retailer-db/categories
+retailerdb,retailer-db,customers,full load,,1,landing/retailer-db/customers
+retailerdb,retailer-db,orders,incremental,updated_at,1,landing/retailer-db/orders
+retailerdb,retailer-db,order_items,incremental,updated_at,1,landing/retailer-db/order_items
+retailerdb,retailer-db,reviews,full load,,0,landing/retailer-db/reviews

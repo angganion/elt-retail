@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+data/airflow/*
+!data/airflow/.gitkeep
+data/retail-datalake/
+data/*.bucketMetadata
+output/*.duckdb
+output/*.wal
+output/logs/
+!output/.gitkeep
